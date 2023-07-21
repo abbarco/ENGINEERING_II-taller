@@ -1,9 +1,12 @@
 # Crear un diccionario para almacenar el menú con sus precios
 menu = {
+    'langosta': 25,
+    'costillas asadas': 13,
     'pollo a la parrilla': 10,
     'pizza margarita': 8,
     'sopa de tomate': 5,
     'pastel de chocolate': 6,
+    'salchipapa': 3,
     'especial del chef 1': 15,
     'especial del chef 2': 20
 }
@@ -40,15 +43,21 @@ def seleccionar_menu():
 
 # Función para calcular el costo total de la orden
 def calcular_costo(orden):
+
+    if not bool(orden):
+        return -1
+
     costo_total = 0
+    total_platos = 0
 
     for plato, cantidad in orden.items():
         costo_plato = menu[plato] * cantidad
         costo_total += costo_plato
+        total_platos += cantidad
 
-    if len(orden) > 5:
+    if total_platos > 5 and total_platos < 10:
         costo_total *= 0.9  # Aplicar descuento del 10% si hay más de 5 platos
-    if len(orden) > 10:
+    if total_platos > 10:
         costo_total *= 0.8  # Aplicar descuento del 20% si hay más de 10 platos
 
     # Aplicar descuentos especiales
@@ -58,7 +67,7 @@ def calcular_costo(orden):
         costo_total -= 10
 
     # Aplicar recargo del 5% para los Chef's Specials
-    if any(plato.startswith("Chef") for plato in orden.keys()):
+    if any(plato.startswith("especial") for plato in orden.keys()):
         costo_total *= 1.05
 
     return costo_total
@@ -97,5 +106,6 @@ def obtener_respuesta_valida():
 
 
 # Ejecutar la función principal
-costo_dining_experience = dining_experience_manager()
-print(f"\nEl costo total de la experiencia de comedor es: ${costo_dining_experience}")
+if __name__ == "__main__":
+    costo_dining_experience = dining_experience_manager()
+    print(f"\nEl costo total de la experiencia de comedor es: ${costo_dining_experience}")

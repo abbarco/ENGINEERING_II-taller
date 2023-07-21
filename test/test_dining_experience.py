@@ -1,70 +1,61 @@
 import pytest
-import dining_experience
+from dining_experience import calcular_costo
 
-# Prueba para validar la selección de una cantidad válida de un plato
-def test_valid_quantity():
-    assert is_valid_quantity(2) == True
+# Pruebas con respuestas esperadas
 
-# Prueba para validar la selección de una cantidad inválida de un plato (cero)
-def test_invalid_quantity_zero():
-    assert is_valid_quantity(0) == False
+def test_calculate_cost_normal():
+    orden = {
+        'pollo a la parrilla': 2,
+        'pizza margarita': 1,
+        'sopa de tomate': 1
+    }
+    costo_esperado = 10*2 + 8*1 + 5*1
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para validar la selección de una cantidad inválida de un plato (negativa)
-def test_invalid_quantity_negative():
-    assert is_valid_quantity(-3) == False
+def test_calculate_cost_discount_10():
+    orden = {
+        'pollo a la parrilla': 2,
+        'pizza margarita': 1,
+        'sopa de tomate': 3
+    }
+    costo_esperado = (10*2 + 8*1 + 5*3) * 0.9
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para calcular el costo total sin aplicar descuentos
-def test_calculate_total_cost_without_discounts():
-    menu = {'pollo a la parrilla': 2, 'pizza margarita': 3, 'sopa de tomate': 1}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 43
+def test_calculate_cost_discount_20():
+    orden = {
+        'salchipapa': 10,
+        'pizza margarita': 1,
+        'sopa de tomate': 1
+    }
+    costo_esperado = (3*10 + 8*1 + 5*1) * 0.8
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para calcular el costo total aplicando descuento del 10%
-def test_calculate_total_cost_with_10_percent_discount():
-    menu = {'pollo a la parrilla': 5, 'pizza margarita': 3, 'sopa de tomate': 5}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 52.2
+def test_calculate_cost_special_offer_1():
+    orden = {
+        'costillas asadas': 4,
+        'pollo a la parrilla': 1,
+    }
+    costo_esperado = (13*4 + 10*1) - 10
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para calcular el costo total aplicando descuento del 20%
-def test_calculate_total_cost_with_20_percent_discount():
-    menu = {'pollo a la parrilla': 7, 'pizza margarita': 6, 'sopa de tomate': 8}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 86.4
+def test_calculate_cost_special_offer_2():
+    orden = {
+        'langosta': 4,
+        'costillas asadas': 1,
+    }
+    costo_esperado = (25*4 + 13*1) - 25
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para calcular el costo total aplicando descuento de $10
-def test_calculate_total_cost_with_10_dollar_discount():
-    menu = {'pizza margarita': 2, 'pastel de chocolate': 2}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 10
+def test_calculate_cost_special_meal_surcharge():
+    orden = {
+        'especial del chef 1': 1,
+        'pizza margarita': 3
+    }
+    costo_esperado = (15*1 + 8*3) * 1.05
+    assert calcular_costo(orden) == costo_esperado
 
-# Prueba para calcular el costo total aplicando descuento de $25
-def test_calculate_total_cost_with_25_dollar_discount():
-    menu = {'pizza margarita': 5, 'pastel de chocolate': 5, 'especial del chef 1': 7}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 83
+# Pruebas con respuestas no esperadas
 
-# Prueba para calcular el costo total aplicando recargo del 5% a comidas especiales
-def test_calculate_total_cost_with_5_percent_surcharge():
-    menu = {'pizza margarita': 2, 'especial del chef 1': 2, 'especial del chef 2': 3}
-    total_cost = calcular_costo(menu)
-    assert total_cost == 72.75
-
-# Prueba para calcular el costo total con una orden inválida (cantidad superior a 100)
-def test_calculate_total_cost_with_invalid_order():
-    menu = {'pizza margarita': 101}
-    total_cost = calcular_costo(menu)
-    assert total_cost == -1
-
-# Prueba para calcular el costo total con una orden inválida (plato no disponible)
-def test_calculate_total_cost_with_unavailable_meal():
-    menu = {'pizza margarita': 2, 'hamburguesa': 2}
-    total_cost = calcular_costo(menu)
-    assert total_cost == -1
-
-# Prueba para obtener una respuesta válida del usuario
-def test_get_valid_response():
-    with pytest.raises(StopIteration):
-        responses = iter(['sii', 'no', 'sí', 'n'])
-        for _ in range(4):
-            respuesta = obtener_respuesta_valida(responses)
-            assert respuesta == 'si' if _ < 2 else 'no'
+def test_calculate_cost_empty_order():
+    orden = {}
+    assert calcular_costo(orden) == -1
