@@ -1,4 +1,5 @@
 # Crear un diccionario para almacenar el menú con sus precios
+
 menu = {
     'langosta': 25,
     'costillas asadas': 13,
